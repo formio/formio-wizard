@@ -1,0 +1,22 @@
+{
+  "name": "formio-form",
+  "version": "0.0.1",
+  "authors": [
+    "Travis Tidwell <travis@form.io>"
+  ],
+  "description": "A blank form template for Form.IO",
+  "keywords": [
+    "formio"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "formio": "~0.0.22"
+  }
+}
