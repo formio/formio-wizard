@@ -1,6 +1,6 @@
 {
   "name": "formio-wizard",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "authors": [
     "Travis Tidwell <travis@form.io>"
   ],
@@ -14,7 +14,9 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "formio-wizard-form.png",
+    "index.html"
   ],
   "dependencies": {
     "formio": "develop"
