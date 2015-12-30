@@ -11,15 +11,31 @@
   </head>
   <body ng-app="formioWizard" ng-controller="WizardController">
 
-    <!-- The Form.io Wizard Element. -->
-    <formio-wizard ng-show="!wizardDone" storage="'wizard'" src="'https://wizard.form.io/wizard'"></formio-wizard>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="https://form.io"><img style="height: 2em; margin-top: -0.5em;" src='https://portal.form.io/images/formio-logo-white.png' /></a>
+        </div>
+      </div>
+    </nav>
+    <div class="jumbotron" style="margin-top: 50px;">
+      <div class="container">
+        <p>This is an example of how to implement a wizard using Form.io.</p>
+        <a class="btn btn-primary" href="https://github.com/formio/formio-wizard">Learn more</a>
+      </div>
+    </div>
+    <div class="container">
+      <!-- The Form.io Wizard Element. -->
+      <formio-wizard ng-show="!wizardDone" storage="'wizard'" src="'https://wizard.form.io/wizard'"></formio-wizard>
 
-    <!-- Show when the wizard is done. -->
-    <div ng-show="wizardDone" class="panel panel-default">
-      <div class=ui.mask"panel-heading">Submitted Data</div>
-      <ul class="list-group">
-        <li class="list-group-item" ng-repeat="(key, value) in submission.data"><strong>{{ key }}</strong> - {{ value }}</li>
-      </ul>
+      <!-- Show submission info the wizard is done. -->
+      <submission-info ng-show="wizardDone" submission="submission"></submission-info>
     </div>
 
     <script src="bower_components/jquery/dist/jquery.js"></script>
@@ -38,6 +54,22 @@
     <script src="src/wizard.js"></script>
     <script type="text/javascript">
       angular.module('formioWizard', ['formio.wizard'])
+        .directive('submissionInfo', function() {
+          return {
+            restrict: 'E',
+            replace: true,
+            template:
+              '<div class="panel panel-default">' +
+                '<div class=ui.mask"panel-heading">Submitted Data</div>' +
+                '<ul class="list-group">' +
+                  '<li class="list-group-item" ng-repeat="(key, value) in submission.data"><strong>{{ key }}</strong> - {{ value }}</li>' +
+                '</ul>' +
+              '</div>',
+            scope: {
+              submission: '='
+            }
+          };
+        })
         .controller('WizardController', [
           '$scope',
           function(
