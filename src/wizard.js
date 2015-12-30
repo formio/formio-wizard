@@ -11,6 +11,7 @@ angular.module('formio.wizard', ['formio'])
                 '</div>' +
                 '<div class="formio-wizard"></div>' +
                 '<ul ng-show="wizardLoaded" class="list-inline">' +
+                    '<li><a class="btn btn-default" ng-click="cancel()">Cancel</a></li>' +
                     '<li ng-if="currentPage > 0"><a class="btn btn-primary" ng-click="prev()">Previous</a></li>' +
                     '<li ng-if="currentPage < (form.components.length - 1)"><a class="btn btn-primary" ng-click="next()">Next</a></li>' +
                     '<li ng-if="currentPage >= (form.components.length - 1)"><a class="btn btn-primary" ng-click="submit()">Submit Form</a></li>' +
@@ -70,6 +71,14 @@ angular.module('formio.wizard', ['formio'])
                             }
                             $scope.$emit('formSubmission', submission);
                         });
+                    };
+
+                    $scope.cancel = function() {
+                        if ($scope.storage) {
+                            localStorage.setItem($scope.storage, '');
+                        }
+                        $scope.currentPage = 0;
+                        showPage();
                     };
 
                     // Move onto the next page.
