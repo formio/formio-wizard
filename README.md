@@ -44,11 +44,11 @@ angular.module('myApp', ['formio.wizard']);
 
 Example
 ================
-Take a look at ***index.html*** for an example implementation of this wizard capability.
+Take a look at **index.html** for an example implementation of this wizard capability.
 
 How it works
 ================
-This directive uses Panel components placed within the root of the form as the separate pages within that form. Because
+This directive uses **Panel** components placed within the root of the form as the separate pages within that form. Because
 of this, you will need to create your form using Panels on the root level to indicate separate pages like the following
 image shows.
 
