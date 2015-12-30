@@ -52,4 +52,4 @@ This directive uses Panel components placed within the root of the form as the s
 of this, you will need to create your form using Panels on the root level to indicate separate pages like the following
 image shows.
 
-
+![](https://raw.githubusercontent.com/formio/formio-wizard/master/formio-wizard-form.png)
