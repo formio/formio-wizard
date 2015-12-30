@@ -1,6 +1,6 @@
 Form.io Wizard
 ---------------------
-An Angular.js directive that provides wizard capabilities to a Form.io form using the following simple directive.
+An Angular.js directive that provides wizard capabilities to a [Form.io](https://form.io) form using the following simple directive.
 
 ```
 <formio-wizard src="'https://wizard.form.io/wizard'"></formio-wizard>
@@ -8,6 +8,10 @@ An Angular.js directive that provides wizard capabilities to a Form.io form usin
 
 This directive uses Panel components placed within the root of your form as an indication for separate pages within
 the wizard.
+
+Getting Started
+===================
+You will first need to create an account at https://form.io. Go there now and sign up for a free account.
 
 Installation
 ====================
