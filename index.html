@@ -44,7 +44,7 @@
     </div>
     <div class="container">
       <!-- The Form.io Wizard Element. -->
-      <formio-wizard ng-show="!wizardDone" storage="'wizard'" src="'https://wizard.form.io/wizard'"></formio-wizard>
+      <formio-wizard ng-show="!wizardDone" storage="'wizard'" src="formUrl"></formio-wizard>
 
       <!-- Show submission info the wizard is done. -->
       <submission-info ng-show="wizardDone" submission="submission"></submission-info>
@@ -65,6 +65,11 @@
     <script src="bower_components/formio/dist/formio.js"></script>
     <script src="src/wizard.js"></script>
     <script type="text/javascript">
+      var query = {};
+      location.search.substr(1).split("&").forEach(function(item) {
+        query[item.split("=")[0]] = item.split("=")[1] && decodeURIComponent(item.split("=")[1]);
+      });
+
       angular.module('formioWizard', ['formio.wizard'])
         .directive('submissionInfo', function() {
           return {
@@ -87,6 +92,7 @@
           function(
             $scope
           ) {
+            $scope.formUrl = query.form || 'https://wizard.form.io/wizard';
             $scope.pages = [];
             $scope.wizardDone = false;
             $scope.submission = {};
