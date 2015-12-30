@@ -77,6 +77,7 @@ angular.module('formio.wizard', ['formio'])
                         if ($scope.storage) {
                             localStorage.setItem($scope.storage, '');
                         }
+                        $scope.submission = {data:{}};
                         $scope.currentPage = 0;
                         showPage();
                     };
