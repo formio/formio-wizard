@@ -1,6 +1,5 @@
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
-var wiredep = require('wiredep').stream;
 var del = require('del');
 var vinylPaths = require('vinyl-paths');
 
@@ -10,26 +9,9 @@ gulp.task('clean', function() {
 });
 
 // Wire the dependencies into index.html
-gulp.task('wiredep', function() {
-    return gulp.src('./index.html').pipe(wiredep()).pipe(gulp.dest('./'));
-});
-
-// Create the minified js and css files.
-gulp.task('useref', ['clean'], function() {
-    var assets = plugins.useref.assets();
-    return gulp.src('./index.html')
-        .pipe(assets)
-        .pipe(plugins.if('*.js', plugins.uglify()))
-        .pipe(plugins.if('*.css', plugins.minifyCss()))
-        .pipe(assets.restore())
-        .pipe(plugins.useref())
-        .pipe(gulp.dest('dist'));
-});
-
-// Copy the fonts.
-gulp.task('html', ['useref'], function() {
-    return gulp.src('./bower_components/bootstrap/fonts/*.*').pipe(gulp.dest('dist/fonts'));
+gulp.task('scripts', function() {
+    return gulp.src('./src/wizard.js').pipe(plugins.uglify()).pipe(gulp.dest('./dist'));
 });
 
 // Define the build task.
-gulp.task('build', ['wiredep', 'html']);
+gulp.task('build', ['clean', 'scripts']);

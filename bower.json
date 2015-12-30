@@ -1,10 +1,10 @@
 {
-  "name": "formio-form",
+  "name": "formio-wizard",
   "version": "0.0.1",
   "authors": [
     "Travis Tidwell <travis@form.io>"
   ],
-  "description": "A blank form template for Form.IO",
+  "description": "A directive that provides wizard capabilities for Form.io forms.",
   "keywords": [
     "formio"
   ],
@@ -17,6 +17,15 @@
     "tests"
   ],
   "dependencies": {
-    "formio": "~0.0.22"
+    "formio": "develop"
+  },
+  "main": "dist/wizard.js",
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/css/bootstrap.min.css",
+        "dist/js/bootstrap.js"
+      ]
+    }
   }
 }
