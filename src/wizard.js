@@ -59,6 +59,7 @@ angular.module('formio.wizard', ['formio'])
                             submission: 'submission'
                         }))($scope));
                         $scope.wizardLoaded = true;
+                        $scope.$emit('wizardPage', $scope.currentPage);
                     };
 
                     // Submit the submission.
@@ -76,6 +77,7 @@ angular.module('formio.wizard', ['formio'])
                         if ($scope.currentPage >= ($scope.form.components.length - 1)) { return; }
                         $scope.currentPage++;
                         showPage();
+                        $scope.$emit('wizardNext', $scope.currentPage);
                     };
 
                     // Move onto the previous page.
@@ -83,12 +85,25 @@ angular.module('formio.wizard', ['formio'])
                         if ($scope.currentPage < 1) { return; }
                         $scope.currentPage--;
                         showPage();
+                        $scope.$emit('wizardPrev', $scope.currentPage);
                     };
+
+                    $scope.goto = function(page) {
+                        if (page < 0) { return; }
+                        if (page >= $scope.form.components.length) { return; }
+                        $scope.currentPage = page;
+                        showPage();
+                    };
+
+                    $scope.$on('wizardGoToPage', function(event, page) {
+                        $scope.goto(page);
+                    });
 
                     // Load the form.
                     $scope.formio.loadForm().then(function(form) {
                         $scope.form = form;
                         $scope.page = angular.copy(form);
+                        $scope.$emit('wizardFormLoad', form);
                         showPage();
                     });
                 }
