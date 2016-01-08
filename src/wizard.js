@@ -44,8 +44,22 @@ angular.module('formio.wizard', ['formio'])
                     $scope.submission = {data: (session ? session.data : {})};
                     $scope.currentPage = session ? session.page : 0;
 
+                    $scope.clear = function() {
+                        if ($scope.storage) {
+                            localStorage.setItem($scope.storage, '');
+                        }
+                        $scope.submission = {data:{}};
+                        $scope.currentPage = 0;
+                    };
+
                     // Show the current page.
                     var showPage = function() {
+
+                        // If the page is past the components length, try to clear first.
+                        if ($scope.currentPage >= $scope.form.components.length) {
+                            $scope.clear();
+                        }
+
                         $scope.wizardLoaded = false;
                         if ($scope.storage) {
                             localStorage.setItem($scope.storage, angular.toJson({
@@ -74,11 +88,7 @@ angular.module('formio.wizard', ['formio'])
                     };
 
                     $scope.cancel = function() {
-                        if ($scope.storage) {
-                            localStorage.setItem($scope.storage, '');
-                        }
-                        $scope.submission = {data:{}};
-                        $scope.currentPage = 0;
+                        $scope.clear();
                         showPage();
                     };
 
