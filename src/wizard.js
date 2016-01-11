@@ -13,8 +13,8 @@ angular.module('formio.wizard', ['formio'])
                 '<ul ng-show="wizardLoaded" class="list-inline">' +
                     '<li><a class="btn btn-default" ng-click="cancel()">Cancel</a></li>' +
                     '<li ng-if="currentPage > 0"><a class="btn btn-primary" ng-click="prev()">Previous</a></li>' +
-                    '<li ng-if="currentPage < (form.components.length - 1)"><a class="btn btn-primary" ng-click="next()">Next</a></li>' +
-                    '<li ng-if="currentPage >= (form.components.length - 1)"><a class="btn btn-primary" ng-click="submit()">Submit Form</a></li>' +
+                    '<li ng-if="currentPage < (form.components.length - 1)"><button class="btn btn-primary" ng-click="next()" ng-disabled="!isValid()">Next</button></li>' +
+                    '<li ng-if="currentPage >= (form.components.length - 1)"><button class="btn btn-primary" ng-click="submit()" ng-disabled="!isValid()">Submit Form</button></li>' +
                 '</ul>' +
             '</div>',
             scope: {
@@ -28,11 +28,15 @@ angular.module('formio.wizard', ['formio'])
             controller: [
                 '$scope',
                 '$compile',
+                '$element',
                 'Formio',
+                'FormioScope',
                 function(
                     $scope,
                     $compile,
-                    Formio
+                    $element,
+                    Formio,
+                    FormioScope
                 ) {
                     var session = $scope.storage ? localStorage.getItem($scope.storage) : false;
                     if (session) {
@@ -43,6 +47,12 @@ angular.module('formio.wizard', ['formio'])
                     $scope.form = {};
                     $scope.submission = {data: (session ? session.data : {})};
                     $scope.currentPage = session ? session.page : 0;
+
+                    $scope.formioAlerts = [];
+                    // Shows the given alerts (single or array), and dismisses old alerts
+                    this.showAlerts = $scope.showAlerts = function(alerts) {
+                      $scope.formioAlerts = [].concat(alerts);
+                    };
 
                     $scope.clear = function() {
                         if ($scope.storage) {
@@ -84,7 +94,8 @@ angular.module('formio.wizard', ['formio'])
                                 localStorage.setItem($scope.storage, '');
                             }
                             $scope.$emit('formSubmission', submission);
-                        });
+                        })
+                        .catch(FormioScope.onError($scope, $element));
                     };
 
                     $scope.cancel = function() {
@@ -113,6 +124,10 @@ angular.module('formio.wizard', ['formio'])
                         if (page >= $scope.form.components.length) { return; }
                         $scope.currentPage = page;
                         showPage();
+                    };
+
+                    $scope.isValid = function() {
+                        return $element.find('[name=formioForm]').children().scope().formioForm.$valid;
                     };
 
                     $scope.$on('wizardGoToPage', function(event, page) {
