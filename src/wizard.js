@@ -13,8 +13,8 @@ angular.module('formio.wizard', ['formio'])
                 '<ul ng-show="wizardLoaded" class="list-inline">' +
                     '<li><a class="btn btn-default" ng-click="cancel()">Cancel</a></li>' +
                     '<li ng-if="currentPage > 0"><a class="btn btn-primary" ng-click="prev()">Previous</a></li>' +
-                    '<li ng-if="currentPage < (form.components.length - 1)"><button class="btn btn-primary" ng-click="next()" ng-disabled="!isValid()">Next</button></li>' +
-                    '<li ng-if="currentPage >= (form.components.length - 1)"><button class="btn btn-primary" ng-click="submit()" ng-disabled="!isValid()">Submit Form</button></li>' +
+                    '<li ng-if="currentPage < (form.components.length - 1)"><button class="btn btn-primary" ng-click="next()">Next</button></li>' +
+                    '<li ng-if="currentPage >= (form.components.length - 1)"><button class="btn btn-primary" ng-click="submit()">Submit Form</button></li>' +
                 '</ul>' +
             '</div>',
             scope: {
@@ -81,14 +81,37 @@ angular.module('formio.wizard', ['formio'])
                         var pageElement = angular.element(document.createElement('formio'));
                         $scope.wizardElement.html($compile(pageElement.attr({
                             form: 'page',
-                            submission: 'submission'
+                            submission: 'submission',
+                            id: 'formio-wizard-form'
                         }))($scope));
                         $scope.wizardLoaded = true;
+                        $scope.formioAlerts = [];
                         $scope.$emit('wizardPage', $scope.currentPage);
+                    };
+
+                    // Check for errors.
+                    $scope.checkErrors = function() {
+                        if (!$scope.isValid()) {
+                            // Change all of the fields to not be pristine.
+                            angular.forEach($element.find('[name="formioFieldForm"]').children(), function(element) {
+                                var elementScope = angular.element(element).scope();
+                                var fieldForm = elementScope.formioFieldForm;
+                                if (fieldForm[elementScope.component.key]) {
+                                    fieldForm[elementScope.component.key].$pristine = false;
+                                }
+                            });
+                            $scope.formioAlerts.push({
+                                type: 'danger',
+                                message: 'Please fix the following errors before proceeding.'
+                            })
+                            return true;
+                        }
+                        return false;
                     };
 
                     // Submit the submission.
                     $scope.submit = function() {
+                        if ($scope.checkErrors()) { return; }
                         $scope.formio.saveSubmission(angular.copy($scope.submission)).then(function(submission) {
                             if ($scope.storage) {
                                 localStorage.setItem($scope.storage, '');
@@ -105,6 +128,7 @@ angular.module('formio.wizard', ['formio'])
 
                     // Move onto the next page.
                     $scope.next = function() {
+                        if ($scope.checkErrors()) { return; }
                         if ($scope.currentPage >= ($scope.form.components.length - 1)) { return; }
                         $scope.currentPage++;
                         showPage();
@@ -127,7 +151,10 @@ angular.module('formio.wizard', ['formio'])
                     };
 
                     $scope.isValid = function() {
-                        return $element.find('[name=formioForm]').children().scope().formioForm.$valid;
+                        var element = $element.find('#formio-wizard-form');
+                        if (!element.length) { return false; }
+                        var formioForm = element.children().scope().formioForm;
+                        return formioForm.$valid;
                     };
 
                     $scope.$on('wizardGoToPage', function(event, page) {
