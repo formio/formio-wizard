@@ -241,6 +241,42 @@ describe("uiMask", function () {
       input.val("12345").triggerHandler("change");
       expect(scope.x).toBe("12345");
     });
+
+    it("should not bleed static mask characters into the value when backspacing", function() {
+        var input = compileElement(inputHtml);
+        scope.$apply("x = ''");
+        scope.$apply("mask = 'QT****'");
+        input.triggerHandler('focus');
+        expect(input.val()).toBe("QT____");
+        //simulate a backspace event
+        input.triggerHandler({ type: 'keydown', which: 8 });
+        input.triggerHandler({ type: 'keyup', which: 8 });
+        expect(input.val()).toBe("QT____");
+        expect(scope.x).toBe('');
+    });
+
+    it("should set model value properly when the value contains the same character as a static mask character", function() {
+        var input = compileElement(inputHtml);
+        scope.$apply("mask = '19'");
+        input.triggerHandler("input");
+        expect(input.val()).toBe("1_");
+        input.val("11").triggerHandler("change");
+        expect(scope.x).toBe("1");
+
+        scope.$apply("mask = '9991999'");
+        scope.$apply("x = ''");
+        input.triggerHandler("input");
+        expect(input.val()).toBe("___1___");
+        input.val("1231456").triggerHandler("change");
+        expect(scope.x).toBe("123456");
+    });
+
+    it("should mask the input properly with multiple identical mask components", function() {
+        var input = compileElement(inputHtml);
+        scope.$apply("mask = '99.99.99-999.99'");
+        input.val("811").triggerHandler("input");
+        expect(input.val()).toBe("81.1_.__-___.__");
+    });
   });
 
   describe("verify change is called", function () {
@@ -597,6 +633,45 @@ describe("uiMask", function () {
       input.val("9a").triggerHandler("input");
       input.triggerHandler("blur");
       expect(input.val()).toBe("");
+    });
+
+    var inputHtmlClearOnBlurPlaceholder = "<input name='input' ng-model='x' ui-mask='{{mask}}' ui-options=\"input.options\" ui-mask-placeholder placeholder=\"PLACEHOLDER\">";
+
+    it("should not show placeholder when value is invalid if clearOnBlurPlaceholder is false", function() {
+      scope.input = {
+        options: {
+          clearOnBlur: false,
+          clearOnBlurPlaceholder: false
+        }
+      };
+
+      var input = compileElement(inputHtmlClearOnBlurPlaceholder);
+
+      scope.$apply("x = ''");
+      scope.$apply("mask = '(9) * A'");
+
+      input.val("").triggerHandler("input");
+      input.triggerHandler("blur");
+      expect(input.val()).toBe("(_) _ _");
+    });
+
+    it("should show placeholder when value is invalid if clearOnBlurPlaceholder is true", function() {
+      scope.input = {
+        options: {
+          clearOnBlur: false,
+          clearOnBlurPlaceholder: true
+        }
+      };
+
+      var input = compileElement(inputHtmlClearOnBlurPlaceholder);
+
+      scope.$apply("x = ''");
+      scope.$apply("mask = '(9) * A'");
+
+      input.val("").triggerHandler("input");
+      input.triggerHandler("blur");
+      expect(input.val()).toBe("");
+      expect(input.attr("placeholder")).toBe("PLACEHOLDER");
     });
   });
 

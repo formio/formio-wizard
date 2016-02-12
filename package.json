@@ -1,8 +1,8 @@
 {
   "name": "formio-wizard",
-  "version": "0.0.6",
-  "description": "A Form.IO wizard example.",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "A Form.IO Wizard Directive.",
+  "main": "dist/wizard.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -23,5 +23,7 @@
     "gulp-uglify": "^1.5.1",
     "vinyl-paths": "^1.0.0"
   },
-  "dependencies": {}
+  "dependencies": {
+    "ng-formio": "^1.2.1"
+  }
 }
