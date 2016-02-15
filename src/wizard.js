@@ -18,7 +18,8 @@ angular.module('formio.wizard', ['formio'])
       '</div>',
       scope: {
         src: '=',
-        storage: '='
+        storage: '=',
+        submission: '='
       },
       link: function (scope, element) {
         scope.wizardLoaded = false;
@@ -42,7 +43,9 @@ angular.module('formio.wizard', ['formio'])
           $scope.formio = new Formio($scope.src);
           $scope.page = {};
           $scope.form = {};
-          $scope.submission = {data: (session ? session.data : {})};
+          if (!$scope.submission && session) {
+            $scope.submission = {data: session.data};
+          }
           $scope.currentPage = session ? session.page : 0;
 
           $scope.formioAlerts = [];
