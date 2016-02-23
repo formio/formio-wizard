@@ -1,25 +1,14 @@
+var fs = require('fs');
 angular.module('formio.wizard', ['formio'])
   .directive('formioWizard', function () {
     return {
       restrict: 'E',
       replace: true,
-      template: '<div>' +
-      '<i ng-show="!wizardLoaded" id="formio-loading" style="font-size: 2em;" class="glyphicon glyphicon-refresh glyphicon-spin"></i>' +
-      '<div ng-repeat="alert in formioAlerts" class="alert alert-{{ alert.type }}" role="alert">' +
-      '{{ alert.message }}' +
-      '</div>' +
-      '<div class="formio-wizard"></div>' +
-      '<ul ng-show="wizardLoaded" class="list-inline">' +
-      '<li><a class="btn btn-default" ng-click="cancel()">Cancel</a></li>' +
-      '<li ng-if="currentPage > 0"><a class="btn btn-primary" ng-click="prev()">Previous</a></li>' +
-      '<li ng-if="currentPage < (form.components.length - 1)"><button class="btn btn-primary" ng-click="next()">Next</button></li>' +
-      '<li ng-if="currentPage >= (form.components.length - 1)"><button class="btn btn-primary" ng-click="submit()">Submit Form</button></li>' +
-      '</ul>' +
-      '</div>',
+      templateUrl: 'formio-wizard.html',
       scope: {
         src: '=',
         storage: '=',
-        submission: '='
+        submission: '=?'
       },
       link: function (scope, element) {
         scope.wizardLoaded = false;
@@ -31,11 +20,15 @@ angular.module('formio.wizard', ['formio'])
         '$element',
         'Formio',
         'FormioScope',
-        function ($scope,
-                  $compile,
-                  $element,
-                  Formio,
-                  FormioScope) {
+        'FormioUtils',
+        function (
+          $scope,
+          $compile,
+          $element,
+          Formio,
+          FormioScope,
+          FormioUtils
+        ) {
           var session = $scope.storage ? localStorage.getItem($scope.storage) : false;
           if (session) {
             session = angular.fromJson(session);
@@ -43,8 +36,10 @@ angular.module('formio.wizard', ['formio'])
           $scope.formio = new Formio($scope.src);
           $scope.page = {};
           $scope.form = {};
-          if (!$scope.submission && session) {
-            $scope.submission = {data: session.data};
+          $scope.pages = [];
+          $scope.colclass = '';
+          if (!$scope.submission || !Object.keys($scope.submission.data).length) {
+            $scope.submission = session ? {data: session.data} : {data: {}};
           }
           $scope.currentPage = session ? session.page : 0;
 
@@ -114,7 +109,18 @@ angular.module('formio.wizard', ['formio'])
             if ($scope.checkErrors()) {
               return;
             }
-            $scope.formio.saveSubmission(angular.copy($scope.submission)).then(function (submission) {
+            var sub = angular.copy($scope.submission);
+            FormioUtils.eachComponent($scope.form.components, function(component) {
+              if (sub.data.hasOwnProperty(component.key) && (component.type === 'number')) {
+                if (sub.data[component.key]) {
+                  sub.data[component.key] = parseFloat(sub.data[component.key]);
+                }
+                else {
+                  sub.data[component.key] = 0;
+                }
+              }
+            });
+            $scope.formio.saveSubmission(sub).then(function (submission) {
                 if ($scope.storage) {
                   localStorage.setItem($scope.storage, '');
                 }
@@ -177,12 +183,38 @@ angular.module('formio.wizard', ['formio'])
 
           // Load the form.
           $scope.formio.loadForm().then(function (form) {
+            $scope.pages = [];
+            angular.forEach(form.components, function(component) {
+
+              // Only include panels for the pages.
+              if (component.type === 'panel') {
+                $scope.pages.push(component);
+              }
+            });
+
             $scope.form = form;
+            $scope.form.components = $scope.pages;
             $scope.page = angular.copy(form);
+            if ($scope.pages.length > 6) {
+              $scope.margin = ((1 - ($scope.pages.length * 0.0833333333)) / 2) * 100;
+              $scope.colclass = 'col-sm-1';
+            }
+            else {
+              $scope.margin = ((1 - ($scope.pages.length * 0.1666666667)) / 2) * 100;
+              $scope.colclass = 'col-sm-2';
+            }
+
             $scope.$emit('wizardFormLoad', form);
             showPage();
           });
         }
       ]
     };
-  });
+  }).run([
+    '$templateCache',
+    function($templateCache) {
+      $templateCache.put('formio-wizard.html',
+        fs.readFileSync(__dirname + '/wizard.html', 'utf8')
+      );
+    }
+  ]);

@@ -22,7 +22,10 @@
   "dependencies": {
     "ng-formio": "^1.2.3"
   },
-  "main": "dist/wizard.js",
+  "main": [
+    "dist/wizard.js",
+    "dist/wizard.css"
+  ],
   "overrides": {
     "bootstrap": {
       "main": [

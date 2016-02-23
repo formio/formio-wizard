@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="bower_components/ui-select/dist/select.css" />
     <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="bower_components/ng-formio/css/formio.css" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="dist/wizard.css" />
   </head>
   <body ng-app="formioWizard" ng-controller="WizardController">
     <a href="https://github.com/formio/formio-wizard" target="_blank"><img style="z-index:5000; position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/121cd7cbdc3e4855075ea8b558508b91ac463ac2/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_green_007200.png"></a>
@@ -37,17 +37,6 @@
       </div>
     </div>
     <div class="container">
-      <div class="row bs-wizard" style="border-bottom:0;">
-        <div ng-class="{disabled: ($index > currentPage), active: ($index == currentPage), complete: ($index < currentPage)}" class="{{ colclass }} bs-wizard-step" ng-repeat="page in pages">
-          <div class="text-center bs-wizard-stepnum">{{ page }}</div>
-          <div class="progress"><div class="progress-bar"></div></div>
-          <a ng-click="gotoPage($index)" class="bs-wizard-dot"></a>
-        </div>
-      </div>
-      <style type="text/css">.bs-wizard > .bs-wizard-step:first-child { margin-left: {{ margin }}%; }</style>
-    </div>
-    </div>
-    <div class="container">
       <!-- The Form.io Wizard Element. -->
       <formio-wizard ng-show="!wizardDone" storage="'wizard'" src="formUrl"></formio-wizard>
 
@@ -68,7 +57,7 @@
     <script src="bower_components/signature_pad/signature_pad.js"></script>
     <script src="bower_components/angular-ui-mask/dist/mask.js"></script>
     <script src="bower_components/ng-formio/dist/formio.js"></script>
-    <script src="src/wizard.js"></script>
+    <script src="dist/wizard.js"></script>
     <script type="text/javascript">
       var query = {};
       location.search.substr(1).split("&").forEach(function(item) {
@@ -98,34 +87,11 @@
             $scope
           ) {
             $scope.formUrl = query.form || 'https://wizard.form.io/wizard';
-            $scope.pages = [];
             $scope.wizardDone = false;
             $scope.submission = {};
-            $scope.currentPage = 0;
-            $scope.colclass = '';
             $scope.$on('formSubmission', function(event, submission) {
               $scope.wizardDone = true;
               $scope.submission = submission;
-            });
-            $scope.gotoPage = function(index) {
-              $scope.$broadcast('wizardGoToPage', index);
-            };
-            $scope.$on('wizardPage', function(event, page) {
-              $scope.currentPage = page;
-            });
-            $scope.$on('wizardFormLoad', function(event, form) {
-              angular.forEach(form.components, function(component) {
-                $scope.pages.push(component.title);
-              });
-
-              if ($scope.pages.length > 6) {
-                $scope.margin = ((1 - ($scope.pages.length * 0.0833333333)) / 2) * 100;
-                $scope.colclass = 'col-sm-1';
-              }
-              else {
-                $scope.margin = ((1 - ($scope.pages.length * 0.1666666667)) / 2) * 100;
-                $scope.colclass = 'col-sm-2';
-              }
             });
           }
         ]);
