@@ -20,7 +20,7 @@
     "styles.css"
   ],
   "dependencies": {
-    "ng-formio": "^1.2.1"
+    "ng-formio": "^1.2.3"
   },
   "main": "dist/wizard.js",
   "overrides": {

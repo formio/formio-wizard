@@ -1,6 +1,6 @@
 {
   "name": "ng-formio",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "authors": [
     "Travis Tidwell <travis@form.io>"
   ],
@@ -35,14 +35,14 @@
     "tests"
   ],
   "homepage": "https://github.com/formio/ngFormio",
-  "_release": "1.2.1",
+  "_release": "1.2.3",
   "_resolution": {
     "type": "version",
-    "tag": "v1.2.1",
-    "commit": "bfe0ee193c221f74aaaaf3c1117c8a63cc3d3742"
+    "tag": "v1.2.3",
+    "commit": "3b3b4fd7805bc77c9a8e989a80616988e8398f21"
   },
   "_source": "git://github.com/formio/ngFormio.git",
-  "_target": "^1.2.1",
+  "_target": "^1.2.3",
   "_originalSource": "ng-formio",
   "_direct": true
 }
