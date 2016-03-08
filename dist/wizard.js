@@ -76,6 +76,7 @@ angular.module('formio.wizard', ['formio'])
             $scope.page.components = $scope.form.components[$scope.currentPage].components;
             var pageElement = angular.element(document.createElement('formio'));
             $scope.wizardElement.html($compile(pageElement.attr({
+              src: "'" + $scope.src + "'",
               form: 'page',
               submission: 'submission',
               id: 'formio-wizard-form'
